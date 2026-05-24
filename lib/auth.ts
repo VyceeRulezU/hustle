@@ -4,10 +4,16 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import { getPrisma } from "./prisma"
 
-const prisma = getPrisma()
+function getAdapter() {
+  try {
+    return PrismaAdapter(getPrisma())
+  } catch {
+    return undefined
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: getAdapter(),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
@@ -25,6 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = credentials.email as string
         const password = credentials.password as string
 
+        const prisma = getPrisma()
         const user = await prisma.user.findUnique({ where: { email } })
         if (!user) return null
 

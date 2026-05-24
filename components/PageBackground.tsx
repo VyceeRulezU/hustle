@@ -8,7 +8,7 @@ export default function PageBackground({ imageUrl }: { imageUrl?: string }) {
         alt=""
         className="h-full w-full object-cover"
       />
-      <div className="absolute inset-0 bg-black/75" />
+      <div className="absolute inset-0 bg-black/80" />
     </div>
   )
 }
