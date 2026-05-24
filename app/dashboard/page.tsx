@@ -9,6 +9,7 @@ import RecentTips from "@/components/RecentTips"
 import MessageWall from "@/components/MessageWall"
 import { signOut } from "next-auth/react"
 import PageBackground from "@/components/PageBackground"
+import ErrorModal from "@/components/ErrorModal"
 
 interface DashboardData {
   slug: string
@@ -40,6 +41,8 @@ export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [bgImage, setBgImage] = useState("")
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     fetch("/api/background")
@@ -61,6 +64,21 @@ export default function DashboardPage() {
       router.push("/login")
     }
   }, [status, router])
+
+  async function handleSignOut() {
+    await signOut()
+    setShowLogoutModal(false)
+  }
+
+  async function copyLink(url: string) {
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // fallback
+    }
+  }
 
   if (status === "loading" || isLoading) {
     return (
@@ -89,12 +107,17 @@ export default function DashboardPage() {
       <PageBackground imageUrl={bgImage} />
       <div className="max-w-2xl mx-auto relative">
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-            <p className="text-sm text-gray-300">{session.user.email}</p>
+          <div className="flex items-center gap-4">
+            <a href="/" className="text-gray-300 hover:text-white text-sm flex items-center gap-1">
+              <span>&larr;</span> Back
+            </a>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+              <p className="text-sm text-gray-300">{session.user.email}</p>
+            </div>
           </div>
           <button
-            onClick={() => signOut()}
+            onClick={() => setShowLogoutModal(true)}
             className="text-sm text-gray-300 hover:text-white"
           >
             Sign out
@@ -102,14 +125,22 @@ export default function DashboardPage() {
         </div>
 
         <div className="mb-6 p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl">
-          <p className="text-sm text-gray-300 mb-1">Your tip page</p>
+          <p className="text-sm text-gray-300 mb-2">Your tip page</p>
           {tipPageUrl ? (
-            <a
-              href={tipPageUrl}
-              className="text-sm font-mono text-blue-300 break-all"
-            >
-              {tipPageUrl}
-            </a>
+            <div className="flex items-center gap-2">
+              <a
+                href={tipPageUrl}
+                className="text-white font-medium hover:underline"
+              >
+                View your tip page &rarr;
+              </a>
+              <button
+                onClick={() => copyLink(tipPageUrl)}
+                className="text-xs text-gray-400 hover:text-white border border-white/20 rounded px-2 py-0.5"
+              >
+                {copied ? "Copied!" : "Copy link"}
+              </button>
+            </div>
           ) : (
             <div className="h-5 w-48 bg-white/20 rounded animate-pulse" />
           )}
@@ -123,6 +154,15 @@ export default function DashboardPage() {
           </>
         )}
       </div>
+
+      <ErrorModal
+        open={showLogoutModal}
+        title="Sign out"
+        message="Are you sure you want to sign out?"
+        confirmLabel="Sign out"
+        onConfirm={handleSignOut}
+        onClose={() => setShowLogoutModal(false)}
+      />
     </div>
   )
 }

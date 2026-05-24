@@ -5,14 +5,16 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import PageBackground from "@/components/PageBackground"
+import ErrorModal from "@/components/ErrorModal"
 
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [bgImage, setBgImage] = useState("")
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [showError, setShowError] = useState(false)
 
   useEffect(() => {
     fetch("/api/background")
@@ -21,9 +23,21 @@ export default function LoginPage() {
       .catch(() => {})
   }, [])
 
+  function handleLoginSuccess() {
+    setShowSuccess(true)
+    setTimeout(() => {
+      setShowSuccess(false)
+      router.push("/dashboard")
+      router.refresh()
+    }, 1200)
+  }
+
+  function handleLoginError() {
+    setShowError(true)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError("")
     setLoading(true)
 
     const result = await signIn("credentials", {
@@ -35,12 +49,11 @@ export default function LoginPage() {
     setLoading(false)
 
     if (result?.error) {
-      setError("Invalid email or password")
+      handleLoginError()
       return
     }
 
-    router.push("/dashboard")
-    router.refresh()
+    handleLoginSuccess()
   }
 
   return (
@@ -69,7 +82,6 @@ export default function LoginPage() {
               className="w-full border border-white/30 rounded-lg px-3 py-2 bg-white/10 text-white placeholder:text-gray-400"
             />
           </div>
-          {error && <p className="text-red-400 text-sm">{error}</p>}
           <button
             type="submit"
             disabled={loading}
@@ -85,6 +97,20 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
+
+      <ErrorModal
+        open={showSuccess}
+        title="Success"
+        message="Logged in successfully!"
+        onClose={() => setShowSuccess(false)}
+      />
+
+      <ErrorModal
+        open={showError}
+        title="Invalid credentials"
+        message="The email or password you entered is incorrect. Please try again."
+        onClose={() => setShowError(false)}
+      />
     </div>
   )
 }
