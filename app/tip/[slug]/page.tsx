@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import { getPrisma } from "@/lib/prisma"
 import TipForm from "@/components/TipForm"
 import PageBackground from "@/components/PageBackground"
+import TipPageNav from "@/components/TipPageNav"
 import { getBackgroundImage } from "@/lib/pexels"
 
 export const dynamic = "force-dynamic"
@@ -27,6 +28,7 @@ export default async function TipPage({
     <div className="relative min-h-screen flex items-center justify-center px-4 py-12">
       <PageBackground imageUrl={bgImage} />
       <div className="w-full max-w-md relative">
+        <TipPageNav slug={slug} />
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white">{creator.displayName}</h1>
           {creator.bio && (
