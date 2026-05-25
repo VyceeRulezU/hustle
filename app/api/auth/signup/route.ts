@@ -3,9 +3,8 @@ import bcrypt from "bcryptjs"
 import { getPrisma } from "@/lib/prisma"
 import { generateSlug } from "@/lib/utils"
 
-const prisma = getPrisma()
-
 export async function POST(request: Request) {
+  const prisma = getPrisma()
   try {
     const { email, password, displayName } = await request.json()
 

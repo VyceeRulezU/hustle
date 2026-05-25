@@ -1,8 +1,8 @@
 import { getPrisma } from "@/lib/prisma"
-
-const prisma = getPrisma()
 import { verifyTransaction } from "@/lib/flutterwave"
 import { notFound } from "next/navigation"
+
+export const dynamic = "force-dynamic"
 
 export default async function SuccessPage({
   params,
@@ -11,6 +11,7 @@ export default async function SuccessPage({
   params: Promise<{ slug: string }>
   searchParams: Promise<{ transaction_id?: string; status?: string; tx_ref?: string }>
 }) {
+  const prisma = getPrisma()
   const { slug } = await params
   const { transaction_id, status } = await searchParams
 

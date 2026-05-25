@@ -1,19 +1,9 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import { getPrisma } from "./prisma"
 
-function getAdapter() {
-  try {
-    return PrismaAdapter(getPrisma())
-  } catch {
-    return undefined
-  }
-}
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: getAdapter(),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",

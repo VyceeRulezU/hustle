@@ -1,16 +1,17 @@
 import { notFound } from "next/navigation"
 import { getPrisma } from "@/lib/prisma"
-
-const prisma = getPrisma()
 import TipForm from "@/components/TipForm"
 import PageBackground from "@/components/PageBackground"
 import { getBackgroundImage } from "@/lib/pexels"
+
+export const dynamic = "force-dynamic"
 
 export default async function TipPage({
   params,
 }: {
   params: Promise<{ slug: string }>
 }) {
+  const prisma = getPrisma()
   const { slug } = await params
 
   const creator = await prisma.user.findUnique({

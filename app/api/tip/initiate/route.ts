@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server"
 import { getPrisma } from "@/lib/prisma"
-
-const prisma = getPrisma()
 import { initiatePayment } from "@/lib/flutterwave"
 
 export async function POST(request: Request) {
+  const prisma = getPrisma()
   try {
     const { creatorSlug, tipperName, tipperEmail, amount, message } =
       await request.json()

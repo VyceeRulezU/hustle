@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getPrisma } from "@/lib/prisma"
-
-const prisma = getPrisma()
 import { verifyTransaction } from "@/lib/flutterwave"
 
 export async function GET(request: NextRequest) {
+  const prisma = getPrisma()
   try {
     const { searchParams } = new URL(request.url)
     const transactionId = searchParams.get("transaction_id")
