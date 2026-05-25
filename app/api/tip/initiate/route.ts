@@ -48,7 +48,9 @@ export async function POST(request: Request) {
       },
     })
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    const host = request.headers.get("host") || "localhost:3000"
+    const proto = request.headers.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https")
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${proto}://${host}`
 
     const checkoutUrl = await initiatePayment({
       txRef,

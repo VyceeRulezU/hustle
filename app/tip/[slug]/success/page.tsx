@@ -3,6 +3,7 @@ import { verifyTransaction } from "@/lib/flutterwave"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import PageBackground from "@/components/PageBackground"
+import { getBackgroundImage } from "@/lib/pexels"
 
 export const dynamic = "force-dynamic"
 
@@ -16,11 +17,12 @@ export default async function SuccessPage({
   const prisma = getPrisma()
   const { slug } = await params
   const { transaction_id, status, tx_ref } = await searchParams
+  const bgImage = await getBackgroundImage()
 
   if (status === "cancelled") {
     return (
       <div className="relative min-h-screen flex items-center justify-center px-4">
-        <PageBackground />
+        <PageBackground imageUrl={bgImage} />
         <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full text-center">
           <div className="text-5xl mb-4">&#x274C;</div>
           <h1 className="text-2xl font-bold text-white mb-2">Payment cancelled</h1>
@@ -41,7 +43,7 @@ export default async function SuccessPage({
   if (status === "failed" || (status !== "successful" && transaction_id)) {
     return (
       <div className="relative min-h-screen flex items-center justify-center px-4">
-        <PageBackground />
+        <PageBackground imageUrl={bgImage} />
         <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full text-center">
           <div className="text-5xl mb-4">&#x274C;</div>
           <h1 className="text-2xl font-bold text-white mb-2">Payment failed</h1>
@@ -62,7 +64,7 @@ export default async function SuccessPage({
   if (!transaction_id) {
     return (
       <div className="relative min-h-screen flex items-center justify-center px-4">
-        <PageBackground />
+        <PageBackground imageUrl={bgImage} />
         <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full text-center">
           <div className="text-5xl mb-4">&#x2753;</div>
           <h1 className="text-2xl font-bold text-white mb-2">No transaction data</h1>
@@ -100,7 +102,7 @@ export default async function SuccessPage({
       if (!pendingTip) {
         return (
           <div className="relative min-h-screen flex items-center justify-center px-4">
-            <PageBackground />
+            <PageBackground imageUrl={bgImage} />
             <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full text-center">
               <div className="text-5xl mb-4">&#x274C;</div>
               <h1 className="text-2xl font-bold text-white mb-2">Transaction not found</h1>
@@ -121,7 +123,7 @@ export default async function SuccessPage({
       if (flwData.status !== "successful" || flwData.currency !== "NGN" || flwData.amount < pendingTip.amount) {
         return (
           <div className="relative min-h-screen flex items-center justify-center px-4">
-            <PageBackground />
+            <PageBackground imageUrl={bgImage} />
             <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full text-center">
               <div className="text-5xl mb-4">&#x274C;</div>
               <h1 className="text-2xl font-bold text-white mb-2">Verification failed</h1>
@@ -150,7 +152,7 @@ export default async function SuccessPage({
     } catch {
       return (
         <div className="relative min-h-screen flex items-center justify-center px-4">
-          <PageBackground />
+          <PageBackground imageUrl={bgImage} />
           <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full text-center">
             <div className="text-5xl mb-4">&#x26A0;&#xFE0F;</div>
             <h1 className="text-2xl font-bold text-white mb-2">Verification error</h1>
@@ -170,7 +172,7 @@ export default async function SuccessPage({
 
     return (
       <div className="relative min-h-screen flex items-center justify-center px-4 py-12">
-        <PageBackground />
+        <PageBackground imageUrl={bgImage} />
         <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-sm w-full text-center">
           <div className="text-5xl mb-4">&#x2705;</div>
           <h1 className="text-2xl font-bold text-white mb-1">Tip sent!</h1>
@@ -208,7 +210,7 @@ export default async function SuccessPage({
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 py-12">
-      <PageBackground />
+      <PageBackground imageUrl={bgImage} />
       <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-sm w-full text-center">
         <div className="text-5xl mb-4">&#x2705;</div>
         <h1 className="text-2xl font-bold text-white mb-1">Tip sent!</h1>
